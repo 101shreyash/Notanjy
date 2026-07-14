@@ -14,4 +14,4 @@
 /backend/package-lock.json
 
 
-.env
+/backend/.env
