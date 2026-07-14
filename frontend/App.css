@@ -1,12 +1,84 @@
-body{
+ body{
     font-size: 30px;
-    margin-top: 8%;
+    margin-top: 1%;
     text-align: center;
-    background-color: black;
-    color: rgb(2, 183, 255);
+    background-color: rgb(217, 214, 214);
+    color: black;
 }
 
 .links {
-    color: white;
+    color: black;
     
 }
+
+input{
+    font-size: large;
+    background-color: grey;
+}
+
+input::placeholder{
+    color: black;
+}
+
+button{
+    font-size: large;
+    background-color: grey;
+}
+
+button:hover{
+    background-color: grey;
+    color: white;
+
+}
+
+
+.footerlinks{
+    
+    color: grey;
+    text-decoration: none;
+
+}
+
+.footerlinks:hover{
+    color: black;
+    text-decoration: none;
+}
+
+
+#noteheading{
+    color: gray;
+    font-family: cursive;
+    font-size: 30px;
+}
+
+textarea{
+    padding-top: 20px;
+    border-radius: 2%;
+    border: none;
+    background-color: rgb(120, 118, 118);
+    color: yellow;
+    font-family: cursive;
+    font-size: 20px;
+    padding-left: 20px;
+    height: 700px;
+    width: 80%;
+}
+
+textarea::placeholder{
+    color: yellow;
+}
+
+input{
+    height: 50px;
+    width: 30%;
+    font-size: 30px;
+    text-align: center;
+}
+
+input::placeholder{
+    font-size: 30px;
+    color: yellow;
+} 
+
+ 
+
