@@ -76,7 +76,7 @@ export default  function TakesNotes() {
 
     <h1 id="noteheading">Welcome {name} Write About Your Habitual Thoughts</h1>
 
-     <input type="text" placeholder=" Title here" style={{backgroundColor : paperbg , color : papertextcolor}}  {...register("usertitle")} />
+     <input className = "title" type="text" placeholder=" Title here" style={{backgroundColor : paperbg , color : papertextcolor}}  {...register("usertitle")} />
      <br /><br />
     <textarea  style={{backgroundColor : paperbg, color : papertextcolor}} placeholder="Write Something Cool" readOnly = {readonly} {...register("usernotes")}></textarea>
     </form>

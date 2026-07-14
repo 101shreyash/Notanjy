@@ -75,7 +75,7 @@ input{
     text-align: center;
 }
 
-input::placeholder{
+.title::placeholder{
     font-size: 30px;
     color: yellow;
 } 
