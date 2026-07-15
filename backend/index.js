@@ -2,12 +2,15 @@ import express from "express";
 import cors from "cors";
 import pool from "./db.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const port = 8001;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser())
 
 app.use(
   cors({
@@ -66,7 +69,7 @@ app
       .then((hashedpassword) => {
         async function DBQuery() {
           try {
-            const result = await pool.query(
+            await pool.query(
               "INSERT INTO users (username,password) VALUES ($1,$2)",
               [username, hashedpassword],
             );
@@ -103,52 +106,116 @@ app
     // catch ends here
   }); // signup route ends here
 
-app.route("/login")
+app
+  .route("/login")
 
-.post((req, res) => {
-  
-  const username = req.body.username.toLowerCase()
+  .post((req, res) => {
+    const username = req.body.username.toLowerCase();
+    const plainpassword = req.body.password;
 
     async function DBQuery() {
-
       try {
         const result = await pool.query(
           "SELECT * FROM users WHERE username = $1",
           [username],
         );
 
-        if (result.rowCount === 0 ) {
-
+        if (result.rowCount === 0) {
           return res.status(404).json({
-
-            success : false,
-            message : "Username dosen't exists",
-
-
-          })
-          
+            success: false,
+            message: "Username dosen't exists",
+          });
         }
 
-        console.log(result.rows);
-        
+        const userid = result.rows[0].userid;
 
-      } 
+        const hashedpassword = result.rows[0].password;
+        const matched = await bcrypt.compare(plainpassword, hashedpassword);
 
+        if (!matched) {
+          return res.status(401).json({
+            success: false,
+            message: "Username or password didnt matched",
+          });
+        }
 
-      
-      catch (error) {
+        if (matched) {
+          const token = jwt.sign(
+            { username: username, userid: userid },
+            process.env.JWTSEC,
+            { expiresIn: "2h" },
+          );
+
+          res.cookie("jwt", token);
+          res.json({
+            success: true,
+            message: "Logged In Sucessfull",
+          });
+        }
+      } catch (error) {
+        console.log(error.message);
         return res.status(500).json({
           success: false,
           message: "Server Error",
         });
-        console.log(error.message);
       }
-
-
     } // db query function ends here
 
     DBQuery();
   });
+
+const jwtvalidation = (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Session Expired Try to Login Again",
+    });
+  }
+
+  jwt.verify(token, process.env.JWTSEC, (err, matched) => {
+    if (err) {
+      console.log(err.message);
+     return res.status(401).json({
+        success: false,
+        message: "Invalid token try to login again",
+      });
+    }
+
+    if (!matched) {
+     return res.status(401).json({
+        success: false,
+        message: "Couldnot verify token try to login again",
+      });
+    }
+
+      req.user = matched;
+      return next();
+
+  });
+};
+
+app.route("/notes")
+
+.get(jwtvalidation , (req,res) => {
+
+ const userid =  req.user.userid //userid
+ const notetitle = req.body.title
+ const notecontent = req.body.content
+
+ if (notetitle.length >50) {
+
+  return res.json({
+    success : false,
+    message : "Title shouldnt contain more than 50 characters"
+  })
+  
+ }
+
+
+})
+
 
 app.listen(port, () => {
   console.log(`Server is listening on ${port}`);
