@@ -10,7 +10,7 @@ const port = 8001;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 
 app.use(
   cors({
@@ -177,121 +177,95 @@ const jwtvalidation = (req, res, next) => {
   jwt.verify(token, process.env.JWTSEC, (err, matched) => {
     if (err) {
       console.log(err.message);
-     return res.status(401).json({
+      return res.status(401).json({
         success: false,
         message: "Invalid token try to login again",
       });
     }
 
     if (!matched) {
-     return res.status(401).json({
+      return res.status(401).json({
         success: false,
         message: "Couldnot verify token try to login again",
       });
     }
 
-      req.user = matched;
-      return next();
-
+    req.user = matched;
+    return next();
   });
 };
 
-app.route("/notes")
+app
+  .route("/notes")
 
-.post(jwtvalidation , (req,res) => {
+  .post(jwtvalidation, (req, res) => {
+    const userid = req.user.userid;
+    const notetitle = req.body.title;
+    const notecontent = req.body.content;
 
- const userid =  req.user.userid 
- const notetitle = req.body.title
- const notecontent = req.body.content
-
- if (notetitle.length >50) {
-
-  return res.json({
-    success : false,
-    message : "Title shouldnt contain more than 50 characters"
-  })
-  
- }
-
- async function DBQuery() {
-
-  try {
-
-    await pool.query("INSERT INTO usernotes (userid , title , content) VALUES ($1,$2,$3)" , [userid,notetitle,notecontent])
-
-   return res.status(201).json({
-      success : true,
-      message : "Noted added Sucessfully"
-    })
-    
-  }
-  
-  catch (error) {
-
-    console.log(error.message);
-    res.status(500).json({
-      success : false,
-      message : "Server Error"
-    })
-    
-    
-  }
-
-
-  
- }
- DBQuery();
-
-
-})
-
-
-.get(jwtvalidation , (req,res) => {
-
-  const userid = req.user.userid
-
-  async function DBQuery() {
-
-    try {
-
-      const result = await pool.query("SELECT * FROM usernotes WHERE userid = ($1)" , [userid])
-
-      if (result.rowCount === 0 ) {
-
-       return res.status(204).json({
-          
-          success : false,
-          message : "Notes not added yet try adding some notes"
-
-        })
-        
-      } // if blocks ends here
-
+    if (notetitle.length > 50) {
       return res.json({
-        success : true,
-        message : result.rows
-
-      })
-      
-    } 
-    
-    catch (error) {
-
-      console.log(error.message);
-      res.json({
-        success : false,
-        message : "Server Error"
-      })
-      
-      
+        success: false,
+        message: "Title shouldnt contain more than 50 characters",
+      });
     }
-  }
 
-  DBQuery();
+    async function DBQuery() {
+      try {
+        await pool.query(
+          "INSERT INTO usernotes (userid , title , content) VALUES ($1,$2,$3)",
+          [userid, notetitle, notecontent],
+        );
 
+        return res.status(201).json({
+          success: true,
+          message: "Noted added Sucessfully",
+        });
+      } catch (error) {
+        console.log(error.message);
+        res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+      }
+    }
+    DBQuery();
+  })
 
-})
+  .get(jwtvalidation, (req, res) => {
+    const userid = req.user.userid;
 
+    async function DBQuery() {
+      try {
+        const result = await pool.query(
+          "SELECT * FROM usernotes WHERE userid = ($1)",
+          [userid],
+        );
+
+        if (result.rowCount === 0) {
+          return res.status(204).json({
+            success: false,
+            message: "Notes not added yet try adding some notes",
+          });
+        } // if blocks ends here
+
+        return res.json({
+          success: true,
+          message: result.rows,
+        });
+      } catch (error) {
+        console.log(error.message);
+        res.json({
+          success: false,
+          message: "Server Error",
+        });
+      }
+    }
+
+    DBQuery();
+  });
+
+  
 
 app.listen(port, () => {
   console.log(`Server is listening on ${port}`);
