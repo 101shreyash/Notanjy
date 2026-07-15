@@ -198,9 +198,9 @@ const jwtvalidation = (req, res, next) => {
 
 app.route("/notes")
 
-.get(jwtvalidation , (req,res) => {
+.post(jwtvalidation , (req,res) => {
 
- const userid =  req.user.userid //userid
+ const userid =  req.user.userid 
  const notetitle = req.body.title
  const notecontent = req.body.content
 
@@ -212,6 +212,82 @@ app.route("/notes")
   })
   
  }
+
+ async function DBQuery() {
+
+  try {
+
+    await pool.query("INSERT INTO usernotes (userid , title , content) VALUES ($1,$2,$3)" , [userid,notetitle,notecontent])
+
+   return res.status(201).json({
+      success : true,
+      message : "Noted added Sucessfully"
+    })
+    
+  }
+  
+  catch (error) {
+
+    console.log(error.message);
+    res.status(500).json({
+      success : false,
+      message : "Server Error"
+    })
+    
+    
+  }
+
+
+  
+ }
+ DBQuery();
+
+
+})
+
+
+.get(jwtvalidation , (req,res) => {
+
+  const userid = req.user.userid
+
+  async function DBQuery() {
+
+    try {
+
+      const result = await pool.query("SELECT * FROM usernotes WHERE userid = ($1)" , [userid])
+
+      if (result.rowCount === 0 ) {
+
+       return res.status(204).json({
+          
+          success : false,
+          message : "Notes not added yet try adding some notes"
+
+        })
+        
+      } // if blocks ends here
+
+      return res.json({
+        success : true,
+        message : result.rows
+
+      })
+      
+    } 
+    
+    catch (error) {
+
+      console.log(error.message);
+      res.json({
+        success : false,
+        message : "Server Error"
+      })
+      
+      
+    }
+  }
+
+  DBQuery();
 
 
 })
