@@ -6,14 +6,14 @@ import { useForm } from "react-hook-form";
 export default function SignupPage() {
 
    const navigate = useNavigate();
-   let { register, handleSubmit } = useForm();
+   let { register, handleSubmit , reset} = useForm();
 
    function AfterSignup(data) {
 
       const username = data.username
       const password = data.password
 
-      async function ServerCommunication() {
+      async function NetworkCall() {
 
 
          try {
@@ -36,26 +36,37 @@ export default function SignupPage() {
 
             if (response.message === "Username must be of 5 character and not greater than 50") {
 
-               return alert("Username must be of 5 character and not greater than 50")
+                alert("Username must be of 5 character and not greater than 50")
+              return reset();
 
             }
 
             if (response.message === "Username should not contains any numbers and spaces") {
 
-               return alert("Username should not contains any numbers and spaces")
+                alert("Username should not contains any numbers and spaces")
+              return reset();
 
             }
 
 
             if (response.message === "Password Must be of 8 characters") {
 
-               return alert("Password Must be of 8 characters")
+                alert("Password Must be of 8 characters")
+               return  reset();
 
+            }
+
+            if (response.message === "Username alredy taken") {
+
+                alert("Username alredy taken try adding another")
+                return reset();
+               
             }
 
 
             if (result.ok) {
 
+               alert("Signup Sucessfull")
                return navigate("/login")
 
             }
@@ -71,7 +82,7 @@ export default function SignupPage() {
 
       }
 
-      ServerCommunication();
+      NetworkCall();
 
 
    }

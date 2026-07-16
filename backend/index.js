@@ -196,6 +196,43 @@ const jwtvalidation = (req, res, next) => {
 };
 
 app
+  .route("/askname")
+
+  .post(jwtvalidation, (req, res) => {
+    const name = req.body.name.toLowerCase();
+    const userid = req.user.userid;
+
+    if (/\d/.test(name) || name.includes(" ")) {
+      return res.status(422).json({
+        success : false,
+        message : "Name Should not contain Spaces And Numbers"
+      })
+      
+    }
+
+    async function DBQuery() {
+      try {
+        await pool.query("UPDATE users SET name = $1 WHERE userid = $2", [name, userid,]);
+          return  res.status(200).json({
+          success : true,
+          message : `Welcome ${name} to our platform` 
+        })
+
+      } 
+      
+      catch (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+        console.log(error);
+      }
+    }
+
+    DBQuery();
+  });
+
+app
   .route("/notes")
 
   .post(jwtvalidation, (req, res) => {
@@ -204,7 +241,7 @@ app
     const notecontent = req.body.content;
 
     if (notetitle.length > 50) {
-      return res.json({
+      return res.status(422).json({
         success: false,
         message: "Title shouldnt contain more than 50 characters",
       });
@@ -264,8 +301,6 @@ app
 
     DBQuery();
   });
-
-  
 
 app.listen(port, () => {
   console.log(`Server is listening on ${port}`);

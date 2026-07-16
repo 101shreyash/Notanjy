@@ -5,30 +5,70 @@ import { useForm } from "react-hook-form";
 export default function Askname() {
 
     const navigate = useNavigate();
-    let {register , handleSubmit} = useForm();
+    let { register, handleSubmit } = useForm();
 
 
     function AfterSubmit(data) {
 
-        console.log(data.name);
-        
-         return navigate("/notes" , {state : {name : data.name}})
+        const name = data.name
 
-         
+        async function NetworkCall() {
+
+            try {
+
+                const response = await fetch("http://localhost:8001/askname", {
+
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({ name: name }),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+
+                })
+
+                const data = await response.json();
+
+
+                if (response.ok) {
+
+                    return navigate("/notes", { state: { username : name } })
+                }
+
+                if (data.message === "Name Should not contain Spaces And Numbers") {
+
+                    return alert("Name Should not contain Spaces And Numbers")
+
+                }
+
+
+            }
+
+            catch (error) {
+
+                alert("Internal Server Error")
+                console.log(error.message);
+
+
+            }
+
+        }
+
+        NetworkCall();
 
     }
 
     return <>
-    
-    <h1>What should we call you ? </h1>
-    <form onSubmit={handleSubmit(AfterSubmit)}>
-        <input type="text" placeholder="Call Me ...." {...register("name")}/> 
-        &nbsp; &nbsp; &nbsp;
-        <button type="submit">Get started</button>
-    </form>
-    
-    
-    
+
+        <h1>What should we call you ? </h1>
+        <form onSubmit={handleSubmit(AfterSubmit)}>
+            <input type="text" placeholder="Call Me ...." {...register("name")} />
+            &nbsp; &nbsp; &nbsp;
+            <button type="submit">Get started</button>
+        </form>
+
+
+
     </>
-    
+
 }
