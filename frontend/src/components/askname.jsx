@@ -35,9 +35,9 @@ export default function Askname() {
                     return navigate("/notes")
                 }
 
-                if (data.message === "Name Should not contain Spaces And Numbers") {
+                if (data.message === "Name Should not contain Numbers") {
 
-                    return alert("Name Should not contain Spaces And Numbers")
+                    return alert("Name Should not contain Any Numbers")
 
                 }
 

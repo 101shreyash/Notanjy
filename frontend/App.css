@@ -1,3 +1,4 @@
+
  body{
     font-size: 30px;
     margin-top: 1%;
@@ -82,9 +83,19 @@ input{
 
  
 .hoverparagraph{
-    height: 80px;
-    background-color: rgb(244, 246, 107);
+    background-color: yellow;
     
 }
  
 
+ .usernotes{
+    align-content: center;
+    height: 80px;
+    background-color: rgb(177, 174, 174);
+}
+
+.usernotes:hover{
+     background-color: rgb(246, 248, 166);
+
+
+} 

@@ -202,10 +202,10 @@ app
     const name = req.body.name.toLowerCase();
     const userid = req.user.userid;
 
-    if (/\d/.test(name) || name.includes(" ")) {
+    if (/\d/.test(name)) {
       return res.status(422).json({
         success: false,
-        message: "Name Should not contain Spaces And Numbers",
+        message: "Name Should not contain Numbers",
       });
     }
 
@@ -331,6 +331,32 @@ app
 
     DBQuery();
   });
+
+  // app.route("deletenotes")
+
+  // .delete((req,res) => {
+
+  //   async function DBQuery() {
+
+  //     try {
+
+  //       pool.query("")
+        
+  //     } 
+      
+  //     catch (error) {
+  //       console.log(error.message);
+          
+  //     }
+
+      
+  //   }
+
+  //   DBQuery();
+
+
+  // })
+
 
 app.listen(port, () => {
   console.log(`Server is listening on ${port}`);

@@ -48,16 +48,22 @@ export default function GetNotes() {
 
     }, [])
 
+    function DeleteNote() {
+        
+       return confirm("Are you sure you want to delete notes?")
+    }
+
     return <>
 
         <h1>All of your Notes Shown Here</h1>
-        <p className="hoverparagraph">Date &nbsp; Title &nbsp; &nbsp; &nbsp; Content</p>
+        <p>Date &nbsp;  Title    &nbsp; &nbsp; &nbsp; Content</p>
         {usernotes.map((notes) => {            
 
             const date = notes.createddate.substring(0,10)
               
            return <>
-           <p> {date} &nbsp; &nbsp; &nbsp; {notes.title} &nbsp; &nbsp; &nbsp; {notes.content} </p>  
+           <p className="usernotes"> {date} &nbsp; &nbsp; &nbsp; {notes.title} &nbsp; &nbsp; &nbsp; {notes.content}
+            &nbsp; <button onClick={DeleteNote}>delete</button> </p>  
            </>
            
            
