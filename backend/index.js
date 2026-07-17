@@ -204,28 +204,58 @@ app
 
     if (/\d/.test(name) || name.includes(" ")) {
       return res.status(422).json({
-        success : false,
-        message : "Name Should not contain Spaces And Numbers"
-      })
-      
+        success: false,
+        message: "Name Should not contain Spaces And Numbers",
+      });
     }
 
     async function DBQuery() {
       try {
-        await pool.query("UPDATE users SET name = $1 WHERE userid = $2", [name, userid,]);
-          return  res.status(200).json({
-          success : true,
-          message : `Welcome ${name} to our platform` 
-        })
-
-      } 
-      
-      catch (err) {
+        await pool.query("UPDATE users SET name = $1 WHERE userid = $2", [
+          name,
+          userid,
+        ]);
+        return res.status(200).json({
+          success: true,
+          message: `Welcome ${name} to our platform`,
+        });
+      } catch (err) {
         return res.status(500).json({
           success: false,
           message: "Server Error",
         });
         console.log(error);
+      }
+    }
+
+    DBQuery();
+  });
+
+app
+  .route("/getname")
+
+  .get(jwtvalidation, (req, res) => {
+    const userid = req.user.userid;
+
+    async function DBQuery() {
+      try {
+
+        const result = await pool.query("SELECT name FROM users WHERE userid = $1" , [userid]);
+
+        return res.status(200).json({
+          message: result.rows[0].name,
+        });
+
+      } catch (error) {
+
+        console.log(error.message);
+        res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+        
+
+
       }
     }
 

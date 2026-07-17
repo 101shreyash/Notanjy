@@ -1,20 +1,53 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { useLocation, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 
 export default function TakesNotes() {
 
+
+     let [name , setname] = useState(); // Name that gets displayed on the screen with welcome message
 
     const navigate = useNavigate();
 
     //reading Mode on and off 
     let [readonly, setreadonly] = useState(false)
-    const location = useLocation();
+
+    async function AskName() {
+
+        try {
+
+            const result = await fetch("http://localhost:8001/getname", {
+
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+
+            })
+
+            const data = await result.json();    
+                   
+            setname(data.message)
 
 
-    //    console.log(location);
+        }
 
-    const name = location.state.username
+        catch (err) {
+
+            console.log(err);
+            return alert("Server Error")
+
+        }
+
+    }
+
+    useEffect(() => {
+
+        AskName();
+
+    }, [])
+
 
 
     // Backrgound of stuff you ll write on 
@@ -51,9 +84,10 @@ export default function TakesNotes() {
 
     function ViewNotes() {
 
-       return navigate("/getnotes")
-        
+        return navigate("/getnotes")
+
     }
+
 
     function AfterSubmit(data) {
 
@@ -68,7 +102,7 @@ export default function TakesNotes() {
 
                     method: "POST",
                     credentials: "include",
-                    body: JSON.stringify ({ title: usertitle, content: usernotes }),
+                    body: JSON.stringify({ title: usertitle, content: usernotes }),
                     headers: {
                         "Content-Type": "application/json",
 
@@ -85,8 +119,8 @@ export default function TakesNotes() {
 
                 if (data.message === "Title shouldnt contain more than 50 characters") {
 
-                  return  alert("Title shouldnt contain more than 50 characters")
-                    
+                    return alert("Title shouldnt contain more than 50 characters")
+
                 }
 
 

@@ -32,7 +32,7 @@ export default function Askname() {
 
                 if (response.ok) {
 
-                    return navigate("/notes", { state: { username : name } })
+                    return navigate("/notes")
                 }
 
                 if (data.message === "Name Should not contain Spaces And Numbers") {

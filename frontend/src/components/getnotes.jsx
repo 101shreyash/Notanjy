@@ -19,7 +19,12 @@ export default function GetNotes() {
             })
 
             const data = await result.json()
-            setusernotes(data.message)
+            const notearrays = data.message
+
+            console.log(notearrays);
+            
+            setusernotes(notearrays)
+            
 
 
 
@@ -46,7 +51,18 @@ export default function GetNotes() {
     return <>
 
         <h1>All of your Notes Shown Here</h1>
-        <h1>Notes ${usernotes}</h1>
+        <p className="hoverparagraph">Date &nbsp; Title &nbsp; &nbsp; &nbsp; Content</p>
+        {usernotes.map((notes) => {            
+
+            const date = notes.createddate.substring(0,10)
+              
+           return <>
+           <p> {date} &nbsp; &nbsp; &nbsp; {notes.title} &nbsp; &nbsp; &nbsp; {notes.content} </p>  
+           </>
+           
+           
+             
+        })}
 
 
     </>
