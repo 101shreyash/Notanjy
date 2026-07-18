@@ -123,6 +123,13 @@ export default function TakesNotes() {
 
                 }
 
+                if (data.message === "Session Expired Try to Login Again") {
+
+                    alert("Session Expired Please Login Again")
+                    navigate("/login")
+                    
+                }
+
 
 
             }
@@ -144,6 +151,34 @@ export default function TakesNotes() {
 
     }
 
+    async function Logout() {
+
+        try {
+
+            await fetch("http://localhost:8001/logout" , {
+                method : "DELETE",
+                credentials : "include",
+                headers : {
+                        "Content-Type": "application/json",
+                }
+            })
+
+            alert("Logged Out sucessfull")
+            navigate("/")
+            
+        } 
+        
+        catch (error) {
+
+            alert("Server Error")
+            console.log(error.message);
+            
+            
+        }
+
+        
+    }
+
 
 
     return <>
@@ -162,7 +197,11 @@ export default function TakesNotes() {
 
             <button onClick={lightPaper} type="button">White Paper</button> &nbsp;
 
-            <button onClick={ViewNotes} type="button">ViewNotes</button>
+            <button onClick={ViewNotes} type="button">ViewNotes</button> &nbsp;
+
+            <button type="button" onClick={Logout}>Logout</button>
+
+
 
             <h1 id="noteheading">Welcome {name} Write About Your Habitual Thoughts</h1>
 

@@ -344,7 +344,7 @@ app
       try {
 
       await pool.query("DELETE FROM usernotes WHERE userid = $1 AND noteid = $2;" ,[userid , noteid])
-     return res.status(200).json({
+     return res.status(200``).json({
         success : true,
         message : "Note Deleted Sucessfully"
       })
@@ -364,6 +364,15 @@ app
 
     DBQuery();
 
+
+  })
+
+
+  app.route("/logout")
+
+  .delete((req,res) => {
+
+   return res.status(204).clearCookie("jwt").end();
 
   })
 
