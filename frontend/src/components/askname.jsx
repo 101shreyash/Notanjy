@@ -46,8 +46,8 @@ export default function Askname() {
 
             catch (error) {
 
+                return console.log(error.message);
                 alert("Internal Server Error")
-                console.log(error.message);
 
 
             }

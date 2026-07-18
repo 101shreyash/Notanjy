@@ -69,11 +69,6 @@ export default function GetNotes() {
                         }
                     })
 
-                    if (result.ok) {
-                        alert("Deleted Sucessfully")
-                        
-                    }
-
                 }
 
                 catch (error) {
