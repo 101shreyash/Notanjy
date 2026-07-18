@@ -22,9 +22,9 @@ export default function GetNotes() {
             const notearrays = data.message
 
             console.log(notearrays);
-            
+
             setusernotes(notearrays)
-            
+
 
 
 
@@ -48,26 +48,67 @@ export default function GetNotes() {
 
     }, [])
 
-    function DeleteNote() {
-        
-       return confirm("Are you sure you want to delete notes?")
+    function DeleteNote(noteid) {
+
+        const confirmdelete = confirm("Are you sure you want to delete notes?")
+        if (confirmdelete === true) {
+
+            console.log(noteid);
+
+            async function NetworkCall() {
+
+                try {
+
+                    const result = await fetch(`http://localhost:8001/deletenotes/${noteid}`, {
+
+                        credentials: "include",
+                        method: "DELETE",
+                        headers: {
+                            'Content-Type': 'application/json',
+
+                        }
+                    })
+
+                    if (result.ok) {
+                        alert("Deleted Sucessfully")
+                        
+                    }
+
+                }
+
+                catch (error) {
+
+                    alert("Server Error 500")
+                    console.log(error.message);
+
+
+                }
+
+            }
+
+            NetworkCall();
+
+
+
+        }
     }
 
     return <>
 
-        <h1>All of your Notes Shown Here</h1>
-        <p>Date &nbsp;  Title    &nbsp; &nbsp; &nbsp; Content</p>
-        {usernotes.map((notes) => {            
+        <h1 style={{ backgroundColor: "plum", display: "inline" }}>Your Notes</h1>
+        <br /><br />
+        {usernotes.map((notes) => {
 
-            const date = notes.createddate.substring(0,10)
-              
-           return <>
-           <p className="usernotes"> {date} &nbsp; &nbsp; &nbsp; {notes.title} &nbsp; &nbsp; &nbsp; {notes.content}
-            &nbsp; <button onClick={DeleteNote}>delete</button> </p>  
-           </>
-           
-           
-             
+            const date = notes.createddate.substring(0, 10)
+
+            return <div key={notes.noteid}>
+                <p className="notestitle">{notes.title}</p>
+                <p className="usernotes"> {date} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {notes.content}
+                    &nbsp; <button onClick={() => DeleteNote(notes.noteid)}>delete</button> </p>
+            </div>
+
+
+
         })}
 
 

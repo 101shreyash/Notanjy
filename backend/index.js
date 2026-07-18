@@ -332,30 +332,40 @@ app
     DBQuery();
   });
 
-  // app.route("deletenotes")
+  app.route("/deletenotes/:noteid")
 
-  // .delete((req,res) => {
+  .delete(jwtvalidation , (req,res) => {
 
-  //   async function DBQuery() {
+    async function DBQuery() {
 
-  //     try {
+      const userid = req.user.userid
+      const noteid = Number(req.params.noteid)
 
-  //       pool.query("")
+      try {
+
+      await pool.query("DELETE FROM usernotes WHERE userid = $1 AND noteid = $2;" ,[userid , noteid])
+     return res.status(200).json({
+        success : true,
+        message : "Note Deleted Sucessfully"
+      })
         
-  //     } 
+      } 
       
-  //     catch (error) {
-  //       console.log(error.message);
-          
-  //     }
+      catch (error) {
+        console.log(error.message);
+       return res.json({
+          success: false,
+          message: "Server Error",
+        });
+      }
 
       
-  //   }
+    }
 
-  //   DBQuery();
+    DBQuery();
 
 
-  // })
+  })
 
 
 app.listen(port, () => {
